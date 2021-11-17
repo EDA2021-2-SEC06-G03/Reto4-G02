@@ -28,11 +28,81 @@ import csv
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    # analyzer es utilizado para interactuar con el modelo
+    analyzer = model.newAnalyzer()
+    return analyzer
+def loadServices(analyzer, routesfile,airportsfile):
+    """
+    Carga los datos de los archivos CSV en el modelo.
+    Se crea un arco entre cada par de estaciones que
+    pertenecen al mismo servicio y van en el mismo sentido.
 
-# Inicialización del Catálogo de libros
+    addRouteConnection crea conexiones entre diferentes rutas
+    servidas en una misma estación.
+    """
+    routesfile = cf.data_dir + routesfile 
+    airportsfile=cf.data_dir+airportsfile
+    input_file = csv.DictReader(open(routesfile, encoding="utf-8"),
+                                delimiter=",")
+    input_file2 = csv.DictReader(open(airportsfile, encoding="utf-8"),
+                                delimiter=",")
+    
+    for airport in input_file2:
+        model.addAirportlist(airport,analyzer)
+    for route in input_file:
+        model.addAirportConnection(analyzer,route)
+    return analyzer
+def totalStops(analyzer):
+    """
+    Total de paradas de autobus
+    """
+    return model.totalStops(analyzer)
 
-# Funciones para la carga de datos
 
-# Funciones de ordenamiento
+def totalConnections(analyzer):
+    """
+    Total de enlaces entre las paradas
+    """
+    return model.totalConnections(analyzer)
 
-# Funciones de consulta sobre el catálogo
+
+def connectedComponents(analyzer):
+    """
+    Numero de componentes fuertemente conectados
+    """
+    return model.connectedComponents(analyzer)
+
+
+def minimumCostPaths(analyzer, initialStation):
+    """
+    Calcula todos los caminos de costo minimo de initialStation a todas
+    las otras estaciones del sistema
+    """
+    return model.minimumCostPaths(analyzer, initialStation)
+
+
+def hasPath(analyzer, destStation):
+    """
+    Informa si existe un camino entre initialStation y destStation
+    """
+    return model.hasPath(analyzer, destStation)
+
+
+def minimumCostPath(analyzer, destStation):
+    """
+    Retorna el camino de costo minimo desde initialStation a destStation
+    """
+    return model.minimumCostPath(analyzer, destStation)
+
+
+def servedRoutes(analyzer):
+    """
+    Retorna el camino de costo minimo desde initialStation a destStation
+    """
+    maxvert, maxdeg = model.servedRoutes(analyzer)
+    return maxvert, maxdeg
+

@@ -25,7 +25,9 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
-
+airportsfile='airports_full.csv'
+routesfile = 'routes_full.csv'
+initialStation = None
 
 """
 La vista se encarga de la interacción con el usuario
@@ -47,6 +49,15 @@ def printMenu():
 
 
 catalog = None
+def optionTwo(cont):
+    print("\nCargando información de transporte de singapur ....")
+    controller.loadServices(cont, routesfile,airportsfile)
+    numedges = controller.totalConnections(cont)
+    numvertex = controller.totalStops(cont)
+    print('Numero de vertices: ' + str(numvertex))
+    print('Numero de arcos: ' + str(numedges))
+    print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
+
 
 """
 Menu principal
@@ -56,9 +67,13 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog=controller.init()
+        optionTwo(catalog)
+        print(controller.totalStops(catalog))
+        print( controller.totalConnections(catalog))
 
     elif int(inputs[0]) == 2:
-        pass
+       pass
 
     else:
         sys.exit(0)
