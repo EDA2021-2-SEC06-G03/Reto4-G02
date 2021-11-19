@@ -24,9 +24,11 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+
 assert cf
-airportsfile='airports_full.csv'
+airportsfile = 'airports_full.csv'
 routesfile = 'routes_full.csv'
+worldcitiesfile='worldcities.csv'
 initialStation = None
 
 """
@@ -35,6 +37,7 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
+
 
 def printMenu():
     print("Bienvenido")
@@ -49,14 +52,30 @@ def printMenu():
 
 
 catalog = None
+def imprimirCiudades(lista):
+    for ciudad in lt.iterator(lista):
+        print()
+        print('Nombre: ', ciudad['city_ascii'])
+        print('Poblacion: ', ciudad['population'])
+        print('Latitud: ', ciudad['lat'])
+        print('Longitud: ', ciudad['lng'])
+def imprimirCiudad(ciudad):
+    print('Nombre: ', ciudad['city_ascii'])
+    print('Poblacion: ', ciudad['population'])
+    print('Latitud: ', ciudad['lat'])
+    print('Longitud: ', ciudad['lng'])
+        
+
 def optionTwo(cont):
-    print("\nCargando información de transporte de singapur ....")
-    controller.loadServices(cont, routesfile,airportsfile)
+    controller.loadServices(cont, routesfile, airportsfile,worldcitiesfile)
     numedges = controller.totalConnections(cont)
     numvertex = controller.totalStops(cont)
-    print('Numero de vertices: ' + str(numvertex))
-    print('Numero de arcos: ' + str(numedges))
+    cities,numcities=controller.quantityCities(cont)
+    print('Numero de Aeropuertos: ' + str(numvertex))
+    print('Numero de Rutas Aereas : ' + str(numedges))
+    print('Numero de Ciudades : ' + str(numcities))
     print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
+    imprimirCiudad(cities['last']['info'])
 
 
 """
@@ -67,13 +86,11 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-        catalog=controller.init()
+        catalog = controller.init()
         optionTwo(catalog)
-        print(controller.totalStops(catalog))
-        print( controller.totalConnections(catalog))
 
     elif int(inputs[0]) == 2:
-       pass
+        pass
 
     else:
         sys.exit(0)

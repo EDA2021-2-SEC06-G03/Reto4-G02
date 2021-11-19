@@ -24,10 +24,11 @@ import config as cf
 import model
 import csv
 
-
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
+
+
 def init():
     """
     Llama la funcion de inicializacion  del modelo.
@@ -35,7 +36,9 @@ def init():
     # analyzer es utilizado para interactuar con el modelo
     analyzer = model.newAnalyzer()
     return analyzer
-def loadServices(analyzer, routesfile,airportsfile):
+
+
+def loadServices(analyzer, routesfile, airportsfile,worldcitiesfile):
     """
     Carga los datos de los archivos CSV en el modelo.
     Se crea un arco entre cada par de estaciones que
@@ -44,18 +47,27 @@ def loadServices(analyzer, routesfile,airportsfile):
     addRouteConnection crea conexiones entre diferentes rutas
     servidas en una misma estación.
     """
-    routesfile = cf.data_dir + routesfile 
-    airportsfile=cf.data_dir+airportsfile
+    routesfile = cf.data_dir + routesfile
+    airportsfile = cf.data_dir + airportsfile
+    worldcitiesfile = cf.data_dir + worldcitiesfile
     input_file = csv.DictReader(open(routesfile, encoding="utf-8"),
                                 delimiter=",")
     input_file2 = csv.DictReader(open(airportsfile, encoding="utf-8"),
-                                delimiter=",")
-    
+                                 delimiter=",")
+    input_file3 = csv.DictReader(open(worldcitiesfile, encoding="utf-8"),
+                                 delimiter=",")
+
     for airport in input_file2:
-        model.addAirportlist(airport,analyzer)
+        model.addDataAirport( analyzer,airport)
     for route in input_file:
-        model.addAirportConnection(analyzer,route)
+        model.addAirportConnection(analyzer, route)
+    for city in input_file3:
+        model.addCity(analyzer, city)
     return analyzer
+def quantityCities(analyzer):
+    return model.quantityCities(analyzer)
+    
+
 def totalStops(analyzer):
     """
     Total de paradas de autobus
@@ -105,4 +117,3 @@ def servedRoutes(analyzer):
     """
     maxvert, maxdeg = model.servedRoutes(analyzer)
     return maxvert, maxdeg
-

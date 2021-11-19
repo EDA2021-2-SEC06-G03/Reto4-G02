@@ -24,7 +24,6 @@
  * Dario Correal - Version inicial
  """
 
-
 import config
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
@@ -32,13 +31,15 @@ from DISClib.ADT import list as lt
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
-assert config
 
+assert config
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
 los mismos.
 """
+
+
 def newAnalyzer():
     """ Inicializa el analizador
 
@@ -50,45 +51,48 @@ def newAnalyzer():
     """
     try:
         analyzer = {
-                    'airports': None,
-                    'connections': None,
-                    'components': None,
-                    'paths': None,
-                    'airportlist':None
-                    }
+            'airports': None,
+            'connections': None,
+            'components': None,
+            'paths': None,
+            'cities': None
+        }
 
         analyzer['airports'] = m.newMap(numelements=14000,
-                                     maptype='PROBING',
-                                     comparefunction=compareAirportIds)
+                                        maptype='PROBING',
+                                        comparefunction=compareAirportIds)
 
         analyzer['connections'] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=14000,
                                               comparefunction=compareAirportIds)
-        analyzer['airportlist']=lt.newList('SINGLE_LINKED', compareAirportIds)
-                                            
+
+        analyzer['cities'] = m.newMap(numelements=14000,
+                                        maptype='PROBING',
+                                        comparefunction=compareAirportIds)
+
+    
+
         return analyzer
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
+
+
 def addAirportConnection(analyzer, route):
-    distance=route["distance_km"]
-    airport_departure_code=route["Departure"]
-    airport_destination_code=route["Destination"]
-    airports=analyzer["airportlist"]
-    for airport in lt.iterator(airports):
-        if airport_departure_code==airport["IATA"]:
-           airport_departure=airport
-        if airport_destination_code==airport["IATA"]:
-            airport_destination=airport
+    distance = route["distance_km"]
+    airport_departure_code = route["Departure"]
+    airport_destination_code = route["Destination"]
     try:
-        addAirport(analyzer, airport_departure)
-        addAirport(analyzer, airport_destination)
-        addConnection(analyzer, airport_departure, airport_destination, distance)
-        #addRouteAirport(analyzer, service)
-        #addRouteAirport(analyzer, lastservice)
+        addAirport(analyzer, airport_departure_code)
+        addAirport(analyzer, airport_destination_code)
+        addConnection(analyzer, airport_departure_code, airport_destination_code, distance)
+        addRouteAirport(analyzer, route)
+        # addRouteAirport(analyzer, lastservice)
         return analyzer
     except Exception as exp:
         error.reraise(exp, 'model:addAirportConnection')
+
+
 def addAirport(analyzer, airportid):
     """
     Adiciona una estación como un vertice del grafo
@@ -99,21 +103,23 @@ def addAirport(analyzer, airportid):
         return analyzer
     except Exception as exp:
         error.reraise(exp, 'model:addairport')
-def addRouteAirport(analyzer, service):
-    """
-    Agrega a una estacion, una ruta que es servida en ese paradero
-    """
-    entry = m.get(analyzer['airports'], service['BusAirportCode'])
-    if entry is None:
+
+
+def addRouteAirport(analyzer, route):
+    
+    entry = m.get(analyzer['airports'], route['Departure'])
+    lstroutes=entry['value']['lstroutes']
+    if lstroutes is None:
         lstroutes = lt.newList(cmpfunction=compareroutes)
-        lt.addLast(lstroutes, service['ServiceNo'])
-        m.put(analyzer['airports'], service['BusAirportCode'], lstroutes)
+        lt.addLast(lstroutes, route['Destination'])
+        info = entry['value']
+        info['lstroutes']=lstroutes
     else:
-        lstroutes = entry['value']
-        info = service['ServiceNo']
+        info = route['Destination']
         if not lt.isPresent(lstroutes, info):
             lt.addLast(lstroutes, info)
     return analyzer
+
 
 def addRouteConnections(analyzer):
     """
@@ -124,7 +130,7 @@ def addRouteConnections(analyzer):
     """
     lstairports = m.keySet(analyzer['airports'])
     for key in lt.iterator(lstairports):
-        lstroutes = m.get(analyzer['airports'], key)['value']
+        lstroutes = m.get(analyzer['airports'], key)['value']['lstroutes']
         prevrout = None
         for route in lt.iterator(lstroutes):
             route = key + '-' + route
@@ -132,6 +138,25 @@ def addRouteConnections(analyzer):
                 addConnection(analyzer, prevrout, route, 0)
                 addConnection(analyzer, route, prevrout, 0)
             prevrout = route
+
+def addDataAirport(analyzer,airport):
+    entry = m.get(analyzer['airports'], airport['IATA'])
+    if entry is None:
+        info={'Data':airport,'lstroutes' : None}
+        m.put(analyzer['airports'],airport['IATA'],info)
+
+def addCity(analyzer,city):
+    entry = m.get(analyzer['cities'], city['id'])
+    if entry is None:
+        m.put(analyzer['cities'],city['id'],city)
+
+def quantityCities(analyzer):
+    
+    lst2 = m.valueSet(analyzer['cities'])
+    cantidad2= lt.size(lst2)
+    return lst2,cantidad2
+
+
 def addConnection(analyzer, origin, destination, distance):
     """
     Adiciona un arco entre dos estaciones
@@ -140,8 +165,13 @@ def addConnection(analyzer, origin, destination, distance):
     if edge is None:
         gr.addEdge(analyzer['connections'], origin, destination, distance)
     return analyzer
-def addAirportlist(airport,analyzer):
-    lt.addLast(analyzer['airportlist'],airport)
+
+
+
+
+
+
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -190,6 +220,13 @@ def totalAirports(analyzer):
     return gr.numVertices(analyzer['connections'])
 
 
+def totalStops(analyzer):
+    """
+    Retorna el total de estaciones (vertices) del grafo
+    """
+    return gr.numVertices(analyzer['connections'])
+
+
 def totalConnections(analyzer):
     """
     Retorna el total arcos del grafo
@@ -209,7 +246,7 @@ def servedRoutes(analyzer):
     for vert in lt.iterator(lstvert):
         lstroutes = m.get(analyzer['airports'], vert)['value']
         degree = lt.size(lstroutes)
-        if(degree > maxdeg):
+        if (degree > maxdeg):
             maxvert = vert
             maxdeg = degree
     return maxvert, maxdeg
