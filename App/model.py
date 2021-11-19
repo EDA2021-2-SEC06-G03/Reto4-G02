@@ -94,9 +94,9 @@ def addAirportConnection(analyzer, route):
 
 
 def addAirport(analyzer, airportid):
-    """
-    Adiciona una estación como un vertice del grafo
-    """
+    
+   
+
     try:
         if not gr.containsVertex(analyzer['connections'], airportid):
             gr.insertVertex(analyzer['connections'], airportid)
@@ -104,6 +104,12 @@ def addAirport(analyzer, airportid):
     except Exception as exp:
         error.reraise(exp, 'model:addairport')
 
+def getAirport(analyzer):
+    return  getAirportByCode(analyzer,gr.vertices(analyzer['connections'])['first']['info'])
+    
+
+def getAirportByCode(analyzer,code):
+    return m.get(analyzer['airports'],code)['value']['Data']
 
 def addRouteAirport(analyzer, route):
     

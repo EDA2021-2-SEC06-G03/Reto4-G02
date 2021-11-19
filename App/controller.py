@@ -66,6 +66,8 @@ def loadServices(analyzer, routesfile, airportsfile,worldcitiesfile):
     return analyzer
 def quantityCities(analyzer):
     return model.quantityCities(analyzer)
+def getAirport(analyzer):
+    return model.getAirport(analyzer)
     
 
 def totalStops(analyzer):

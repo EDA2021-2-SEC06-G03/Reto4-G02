@@ -45,7 +45,7 @@ def printMenu():
     print("2-Req 1 Encontrar puntos de interconexión aérea")
     print("3-Req 2 Encontrar clústeres de tráfico aéreo")
     print("4-Req 3 Encontrar la ruta más corta entre ciudades")
-    print("5-Req 4 utilizar las  millas  del viajero para realizar un viaje que cubra la mayor cantidad de ciudades .")
+    print("5-Req 4 utilizar las  millas  del viajero para realizar un viaje que cubra la mayor cantidad de ciudades ")
     print("6-Req 5  Cuantificar el efecto de un aeropuerto cerrado")
     print("7-Req 6 Comparar con servicio WEB externo")
     print("8-Req 7 Visualizar gráficamente los requerimientos")
@@ -56,26 +56,43 @@ def imprimirCiudades(lista):
     for ciudad in lt.iterator(lista):
         print()
         print('Nombre: ', ciudad['city_ascii'])
-        print('Poblacion: ', ciudad['population'])
+        print('ciudad : ', ciudad['population'])
         print('Latitud: ', ciudad['lat'])
         print('Longitud: ', ciudad['lng'])
+        print()
 def imprimirCiudad(ciudad):
     print('Nombre: ', ciudad['city_ascii'])
     print('Poblacion: ', ciudad['population'])
     print('Latitud: ', ciudad['lat'])
     print('Longitud: ', ciudad['lng'])
+    print()
+def imprimirAeropuerto(aeropuerto):
+    print('Nombre: ', aeropuerto['Name'])
+    print('Ciudad: ', aeropuerto['City'])
+    print('Pais: ', aeropuerto['Country'])
+    print('Latitud: ', aeropuerto['Latitude'])
+    print('Longitud: ', aeropuerto['Longitude'])
+    print()
+   
+
         
 
 def optionTwo(cont):
     controller.loadServices(cont, routesfile, airportsfile,worldcitiesfile)
     numedges = controller.totalConnections(cont)
     numvertex = controller.totalStops(cont)
+    primerAeropuerto=controller.getAirport(cont)
     cities,numcities=controller.quantityCities(cont)
     print('Numero de Aeropuertos: ' + str(numvertex))
     print('Numero de Rutas Aereas : ' + str(numedges))
     print('Numero de Ciudades : ' + str(numcities))
     print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
     imprimirCiudad(cities['last']['info'])
+    imprimirAeropuerto(primerAeropuerto)
+  
+
+    
+
 
 
 """
