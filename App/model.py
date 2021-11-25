@@ -24,6 +24,7 @@
  * Dario Correal - Version inicial
  """
 
+from DISClib.ADT.indexminpq import size
 import config
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
@@ -31,6 +32,9 @@ from DISClib.ADT import list as lt
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from DISClib.Algorithms.Graphs import dfs
+
+
 
 assert config
 
@@ -79,7 +83,7 @@ def newAnalyzer():
 
 
 def addAirportConnection(analyzer, route):
-    distance = route["distance_km"]
+    distance = float(route["distance_km"])
     airport_departure_code = route["Departure"]
     airport_destination_code = route["Destination"]
     try:
@@ -106,7 +110,7 @@ def addAirport(analyzer, airportid):
 
 def getAirport(analyzer):
     return  getAirportByCode(analyzer,gr.vertices(analyzer['connections'])['first']['info'])
-    
+
 
 def getAirportByCode(analyzer,code):
     return m.get(analyzer['airports'],code)['value']['Data']
@@ -161,6 +165,10 @@ def quantityCities(analyzer):
     lst2 = m.valueSet(analyzer['cities'])
     cantidad2= lt.size(lst2)
     return lst2,cantidad2
+def connectedComponents(analyzer):
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    return scc.connectedComponents(analyzer['components'])
+
 
 
 def addConnection(analyzer, origin, destination, distance):
@@ -171,6 +179,36 @@ def addConnection(analyzer, origin, destination, distance):
     if edge is None:
         gr.addEdge(analyzer['connections'], origin, destination, distance)
     return analyzer
+def Requermiento4(analyzer,city,millas):
+    for info in lt.iterator(m.valueSet(analyzer['airports'])):
+        if info["Data"]["City"]==city:
+            AirportCode=info["Data"]["IATA"]
+    #Busqueda=dfs.DepthFirstSearch(analyzer["connections"],AirportCode)
+    Kilomentros= float(millas) * 1.6
+    rutas=lt.newList()
+    Busqueda=djk.Dijkstra(analyzer["connections"],AirportCode)
+    costoTotal=0
+    for aeropuerto in lt.iterator(gr.vertices(analyzer["connections"])):
+        if djk.hasPathTo(Busqueda,aeropuerto):
+             lt.addLast(rutas,djk.pathTo(Busqueda,aeropuerto))
+             costoTotal+=djk.distTo(Busqueda,aeropuerto)
+             
+            
+
+             
+
+    nodos= lt.size(rutas)
+    #for ruta in lt.iterator(rutas):
+        #for vertice in lt.iterator(ruta):
+    return nodos,costoTotal
+            
+
+       
+
+       
+
+    
+
 
 
 
