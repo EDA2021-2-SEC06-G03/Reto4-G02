@@ -68,8 +68,10 @@ def quantityCities(analyzer):
     return model.quantityCities(analyzer)
 def getAirport(analyzer):
     return model.getAirport(analyzer)
-    
-
+def  ConnectedComponents(analyzer):
+     return model.connectedComponents(analyzer)
+def requerimiento4(analyzer,city,millas):
+    return model.Requermiento4(analyzer,city,millas)
 def totalStops(analyzer):
     """
     Total de paradas de autobus

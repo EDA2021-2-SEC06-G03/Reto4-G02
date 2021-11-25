@@ -77,11 +77,12 @@ def imprimirAeropuerto(aeropuerto):
 
         
 
-def optionTwo(cont):
+def optionOne(cont):
     controller.loadServices(cont, routesfile, airportsfile,worldcitiesfile)
     numedges = controller.totalConnections(cont)
     numvertex = controller.totalStops(cont)
     primerAeropuerto=controller.getAirport(cont)
+    #connection=(controller.ConnectedComponents(cont))
     cities,numcities=controller.quantityCities(cont)
     print('Numero de Aeropuertos: ' + str(numvertex))
     print('Numero de Rutas Aereas : ' + str(numedges))
@@ -89,7 +90,18 @@ def optionTwo(cont):
     print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
     imprimirCiudad(cities['last']['info'])
     imprimirAeropuerto(primerAeropuerto)
-  
+    #print(connection)
+
+def optionFive(cont):
+    ciudad=input("Ingrese la Ciudadad de salida")
+    millas=input("Ingrese la cnatidad de millas que tiene")
+    nodos,costoTotal=controller.requerimiento4(cont,ciudad,millas)
+    print("El número de nodos conectados a la red de expansión mínima es: "+str(nodos))
+    print("El costo total (distancia en [km]) de la red de expansión mínima  es: " +str(costoTotal))
+    
+    
+    
+
 
     
 
@@ -104,10 +116,12 @@ while True:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
         catalog = controller.init()
-        optionTwo(catalog)
+        optionOne(catalog)
 
     elif int(inputs[0]) == 2:
         pass
+    elif int(inputs[0]) == 5:
+        optionFive(catalog)
 
     else:
         sys.exit(0)
