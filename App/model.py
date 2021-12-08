@@ -439,11 +439,7 @@ def homonimas(analyzer, city):
 
 
 def requerimiento6(analyzer):
-    amadeus = Client(
-        client_id='sRL7tAHuoFMNi8DdGCY6AbVYZDkZRI0q',
-        client_secret='IewTDt4rGGv2lMBH'
-        # quitarlo en la ultima subida
-    )
+    amadeus = Client
 
     try:
         '''

@@ -27,8 +27,8 @@ from DISClib.ADT import list as lt
 import folium
 
 assert cf
-airportsfile = 'airports-utf8-large.csv'
-routesfile = 'routes-utf8-large.csv'
+airportsfile = 'airports-utf8-small.csv'
+routesfile = 'routes-utf8-small.csv'
 worldcitiesfile = 'worldcities-utf8.csv'
 initialStation = None
 
@@ -90,6 +90,11 @@ def imprimirAeropuerto(aeropuerto):
     print('Pais: ', aeropuerto['Country'])
     print('Latitud: ', aeropuerto['Latitude'])
     print('Longitud: ', aeropuerto['Longitude'])
+    print()
+def imprimirAeropuerto2(aeropuerto):
+    print('Nombre: ', aeropuerto['Name'])
+    print('Ciudad: ', aeropuerto['City'])
+    print('Pais: ', aeropuerto['Country'])
     print()
 
 
@@ -181,12 +186,19 @@ def req_1(cont):
 def req_2(cont):
     iata1 = input("Ingrese el IATA #1: ")
     iata2 = input("Ingrese el IATA #2: ")
+    print("El codigo del aeropuerto 1 es :"+ iata1)
+    print("El codigo del aeropuerto 2 es :"+iata2)
     cantidad, conectados, aeropuertos = controller.connectedComponents(cont, iata1, iata2)
     print("La cantidad de clusters en el grafo es de: ", cantidad)
     if conectados:
         print("Los aeropuertos estan conectados")
+        print("***Aeropuertos IATAS***: ",iata1,"y",iata2)
+        imprimirAeropuertos(aeropuertos)
+
     else:
         print("Los aeropuertos no estan conectados")
+        print("***Aeropuertos IATAS***: ",iata1,"y",iata2)
+        imprimirAeropuertos(aeropuertos)
     print()
     guardarMapa(aeropuertos, "Req2")
 
