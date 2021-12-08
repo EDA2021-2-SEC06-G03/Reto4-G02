@@ -38,7 +38,7 @@ def init():
     return analyzer
 
 
-def loadServices(analyzer, routesfile, airportsfile,worldcitiesfile):
+def loadServices(analyzer, routesfile, airportsfile, worldcitiesfile):
     """
     Carga los datos de los archivos CSV en el modelo.
     Se crea un arco entre cada par de estaciones que
@@ -56,41 +56,65 @@ def loadServices(analyzer, routesfile, airportsfile,worldcitiesfile):
                                  delimiter=",")
     input_file3 = csv.DictReader(open(worldcitiesfile, encoding="utf-8"),
                                  delimiter=",")
-
     for airport in input_file2:
-        model.addDataAirport( analyzer,airport)
+        model.addDataAirport(analyzer, airport)
     for route in input_file:
         model.addAirportConnection(analyzer, route)
     for city in input_file3:
         model.addCity(analyzer, city)
+    model.addRouteNoDirigido(analyzer)
     return analyzer
+
+
 def quantityCities(analyzer):
     return model.quantityCities(analyzer)
-def getAirport(analyzer):
-    return model.getAirport(analyzer)
-def  ConnectedComponents(analyzer):
-     return model.connectedComponents(analyzer)
-def requerimiento4(analyzer,city,millas):
-    return model.Requermiento4(analyzer,city,millas)
-def totalStops(analyzer):
-    """
-    Total de paradas de autobus
-    """
-    return model.totalStops(analyzer)
+
+
+def getFirstAirport(analyzer):
+    return model.getFirstAirport(analyzer)
+
+
+def getFirstAirportNoDirigido(analyzer):
+    return model.getFirstAirportNoDirigido(analyzer)
+
+
+def getLastAirport(analyzer):
+    return model.getLastAirport(analyzer)
+
+
+def getLastAirportNoDirigido(analyzer):
+    return model.getLastAirportNoDirigido(analyzer)
+
+
+def totalAirports(analyzer):
+    return model.totalAirports(analyzer)
+
+
+def requerimiento6(analyzer):
+    return model.requerimiento6(analyzer)
 
 
 def totalConnections(analyzer):
-    """
-    Total de enlaces entre las paradas
-    """
     return model.totalConnections(analyzer)
 
 
-def connectedComponents(analyzer):
+def totalConnectionsNoDirigido(analyzer):
+    return model.totalConnectionsNoDirigido(analyzer)
+
+
+def connectedComponents(analyzer, iata1, iata2):
     """
     Numero de componentes fuertemente conectados
     """
-    return model.connectedComponents(analyzer)
+    return model.connectedComponents(analyzer, iata1, iata2)
+
+
+def conectados(analyzer):
+    return model.conectados(analyzer)
+
+
+def requerimiento4(analyzer, city, millas):
+    return model.Requermiento4(analyzer, city, millas)
 
 
 def minimumCostPaths(analyzer, initialStation):
@@ -99,6 +123,18 @@ def minimumCostPaths(analyzer, initialStation):
     las otras estaciones del sistema
     """
     return model.minimumCostPaths(analyzer, initialStation)
+
+
+def ruta_corta(analyzer, ciudad_origen, ciudad_destino):
+    return model.ruta_corta(analyzer, ciudad_origen, ciudad_destino)
+
+
+def eliminarAeropuerto(analyzer, iata_eliminar):
+    return model.eliminarAeropuerto(analyzer, iata_eliminar)
+
+
+def homonimas(analyzer, ciudad):
+    return model.homonimas(analyzer, ciudad)
 
 
 def hasPath(analyzer, destStation):
